@@ -4,10 +4,15 @@ $(document).ready(function () {
   addClickHandlers();
 });
 
+
 function addClickHandlers() {
   $('#submitBtn').on('click', handleSubmit);
   $('#bookShelf').on('click', '.deleteBtn', deleteBook)
+  $('#bookShelf').on('click', '.readBtn', markedAsRead)
   // TODO - Add code for edit & delete buttons
+}
+function markedAsRead() {
+
 }
 
 function deleteBook() {
@@ -72,6 +77,8 @@ function renderBooks(books) {
     $tr.data('book', book);
     $tr.append(`<td>${book.title}</td>`);
     $tr.append(`<td>${book.author}</td>`);
+    $tr.append(`<td>${book.status}</td>`);
+    $tr.append(`<td><button class="readBtn">Mark As Read</button></td>`);
     $tr.append(`<td><button class="deleteBtn">Delete</button></td>`);
     $('#bookShelf').append($tr);
   }
