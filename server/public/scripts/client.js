@@ -11,8 +11,18 @@ function addClickHandlers() {
   $('#bookShelf').on('click', '.readBtn', markedAsRead)
   // TODO - Add code for edit & delete buttons
 }
-function markedAsRead() {
-
+function markedAsRead(book) {
+  let bookId = $(this).closest('tr').data('id');
+  $.ajax({
+    method: 'PUT',
+    url: `/books/${bookId}`,
+    data: book.status
+  }).then(function (response) {
+    refreshBooks();
+  }).catch(function (error) {
+    console.log('error in client PUT', error);
+    alert('OPE')
+  })
 }
 
 function deleteBook() {
@@ -34,7 +44,9 @@ function handleSubmit() {
   let book = {};
   book.author = $('#author').val();
   book.title = $('#title').val();
+  book.status = "Want To Read"
   addBook(book);
+  markedAsRead(book);
 }
 
 // adds a book to the database
