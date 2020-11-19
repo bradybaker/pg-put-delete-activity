@@ -1,4 +1,4 @@
-$(document).ready(function(){
+$(document).ready(function () {
   console.log('jQuery sourced.');
   refreshBooks();
   addClickHandlers();
@@ -6,8 +6,22 @@ $(document).ready(function(){
 
 function addClickHandlers() {
   $('#submitBtn').on('click', handleSubmit);
-
+  $('#bookShelf').on('click', '.deleteBtn', deleteBook)
   // TODO - Add code for edit & delete buttons
+}
+
+function deleteBook() {
+  console.log('Delete is working');
+  let bookId = $(this).closest('tr').data('id');
+  $.ajax({
+    method: 'DELETE',
+    url: `/books/${bookId}`
+  }).then((function (response) {
+    refreshBooks();
+  })).catch((function (error) {
+    console.log('Error:', error)
+    alert('Ope this aint it');
+  }))
 }
 
 function handleSubmit() {
@@ -24,13 +38,13 @@ function addBook(bookToAdd) {
     type: 'POST',
     url: '/books',
     data: bookToAdd,
-    }).then(function(response) {
-      console.log('Response from server.', response);
-      refreshBooks();
-    }).catch(function(error) {
-      console.log('Error in POST', error)
-      alert('Unable to add book at this time. Please try again later.');
-    });
+  }).then(function (response) {
+    console.log('Response from server.', response);
+    refreshBooks();
+  }).catch(function (error) {
+    console.log('Error in POST', error)
+    alert('Unable to add book at this time. Please try again later.');
+  });
 }
 
 // refreshBooks will get all books from the server and render to page
@@ -38,10 +52,10 @@ function refreshBooks() {
   $.ajax({
     type: 'GET',
     url: '/books'
-  }).then(function(response) {
+  }).then(function (response) {
     console.log(response);
     renderBooks(response);
-  }).catch(function(error){
+  }).catch(function (error) {
     console.log('error in GET', error);
   });
 }
@@ -51,13 +65,14 @@ function refreshBooks() {
 function renderBooks(books) {
   $('#bookShelf').empty();
 
-  for(let i = 0; i < books.length; i += 1) {
+  for (let i = 0; i < books.length; i += 1) {
     let book = books[i];
     // For each book, append a new row to our table
-    let $tr = $('<tr></tr>');
+    let $tr = $(`<tr data-id="${book.id}"></tr>`);
     $tr.data('book', book);
     $tr.append(`<td>${book.title}</td>`);
     $tr.append(`<td>${book.author}</td>`);
+    $tr.append(`<td><button class="deleteBtn">Delete</button></td>`);
     $('#bookShelf').append($tr);
   }
 }
